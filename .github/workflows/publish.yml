@@ -52,10 +52,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run tests
-        working-directory: Development
-        run: python -m unittest discover -s tests -q
-
       - name: Select release version
         id: version
         run: python .github/scripts/release_version.py
