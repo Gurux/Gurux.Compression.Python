@@ -1,0 +1,67 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>f83a0ab9-c6f0-45b7-a284-3cf82ebe019f</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Gurux.Compression</Name>
+    <RootNamespace>Gurux.Compression</RootNamespace>
+    <TestFramework>Pytest</TestFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="gurux_compression\_bit_array.py" />
+    <Compile Include="gurux_compression\enums\operation.py" />
+    <Compile Include="gurux_compression\enums\maximum_string_length.py" />
+    <Compile Include="gurux_compression\enums\__init__.py" />
+    <Compile Include="tests\_byte_buffer.py" />
+    <Compile Include="gurux_compression\v44_decoder.py" />
+    <Compile Include="gurux_compression\v44_decoder_entry.py" />
+    <Compile Include="gurux_compression\v44_encoder.py" />
+    <Compile Include="gurux_compression\v44_node.py" />
+    <Compile Include="gurux_compression\v44_options.py" />
+    <Compile Include="gurux_compression\v44_trace_args.py" />
+    <Compile Include="gurux_compression\__init__.py" />
+    <Compile Include="gurux_compression\_bit_reader.py" />
+    <Compile Include="gurux_compression\_bit_writer.py" />
+    <Compile Include="gurux_compression\_diagnostic_value.py" />
+    <Compile Include="gurux_compression\_stream_io.py" />
+    <Compile Include="gurux_compression\invalid_data_error.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="tests\test_parity.py" />
+    <Compile Include="tests\test_streams_and_diagnostics.py" />
+    <Compile Include="tests\test_interop.py" />
+    <Compile Include="tests\test_byte_buffer.py" />
+    <Compile Include="tests\test_options.py" />
+    <Compile Include="tests\test_bit_array.py" />
+    <Compile Include="tests\test_codec_api.py" />
+    <Compile Include="tests\test_v44.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="gurux_compression\" />
+    <Folder Include="gurux_compression\enums\" />
+    <Folder Include="tests\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

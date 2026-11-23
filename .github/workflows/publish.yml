@@ -1,0 +1,107 @@
+# --------------------------------------------------------------------------
+# Gurux Ltd
+#
+# Copyright (c) Gurux Ltd.
+#
+# This file is part of Gurux Device Framework.
+#
+# Commit: $Format:%H$
+# Date:   $Format:%cI$
+#
+# This software is available under either of the following licenses:
+#
+# 1. GNU General Public License, version 2 only (GPL-2.0-only).
+#    See the LICENSE file included with this distribution.
+#
+# 2. A commercial license granted by Gurux Ltd under a separate written
+#    agreement. Use under this option requires a valid commercial license
+#    and is governed by the terms of that agreement.
+#
+# If you have not obtained a commercial license from Gurux Ltd,
+# use of this software is governed by GPL-2.0-only.
+#
+# Commercial licensing: https://www.gurux.fi/
+#
+# SPDX-License-Identifier: GPL-2.0-only OR LicenseRef-Gurux-Commercial
+# --------------------------------------------------------------------------
+name: Publish to PyPI
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pypi-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run tests
+        working-directory: Development
+        run: python -m unittest discover -s tests -q
+
+      - name: Select release version
+        id: version
+        run: python .github/scripts/release_version.py
+
+      - name: Build and check distributions
+        working-directory: Development
+        run: |
+          python -m pip install --upgrade build twine
+          cp ../LICENSE LICENSE
+          cp -r ../LICENSES LICENSES
+          python -m build
+          python -m twine check dist/*
+
+      - name: Commit version and create tag
+        if: steps.version.outputs.existing != 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Development/setup.py
+          if ! git diff --cached --quiet; then
+            git commit -m "Release ${RELEASE_VERSION}"
+          fi
+          git tag -a "v${RELEASE_VERSION}" -m "Source: ${GITHUB_SHA}"
+          git push --atomic origin "HEAD:${GITHUB_REF_NAME}" "refs/tags/v${RELEASE_VERSION}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: Development/dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
